@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="k8sclient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/k8sclient_jar</output-path>
+    <root id="root">
+      <element id="archive" name="k8sclient.jar">
+        <element id="module-output" name="k8sclient" />
+      </element>
+      <element id="library" level="project" name="fasterxml.jackson.core.annotations" />
+      <element id="library" level="project" name="fasterxml.jackson.core.databind" />
+      <element id="library" level="project" name="fasterxml.jackson.core" />
+      <element id="library" level="project" name="klog" />
+    </root>
+  </artifact>
+</component>
