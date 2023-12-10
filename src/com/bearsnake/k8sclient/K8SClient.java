@@ -20,6 +20,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class K8SClient {
 
@@ -137,7 +138,7 @@ public class K8SClient {
         final boolean allPods
     ) throws K8SHTTPError, K8SJSONError, K8SRequestError {
         var fn = "evictPodsForNode";
-        _logger.tracef("Entering %s nodeName=%s allPods=%s", fn, nodeName, allPods);
+        _logger.trace("Entering %s nodeName=%s allPods=%s", fn, nodeName, allPods);
 
         var mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
@@ -195,7 +196,7 @@ public class K8SClient {
             }
         }
 
-        _logger.tracef("Exiting %s", fn);
+        _logger.trace("Exiting %s", fn);
     }
 
     /**
@@ -203,7 +204,7 @@ public class K8SClient {
      */
     public Collection<NodeEntity> getNodes() throws K8SRequestError, K8SHTTPError, K8SJSONError {
         var fn = "getNodes";
-        _logger.tracef("Entering %s", fn);
+        _logger.trace("Entering %s", fn);
 
         var mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
@@ -217,12 +218,52 @@ public class K8SClient {
 
         try {
             var nodeList = mapper.readValue((String) response.body(), NodeListPayload.class);
-            _logger.tracef("Exiting %s", fn);
+            _logger.trace("Exiting %s", fn);
             return nodeList.items;
         } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
             throw new K8SJSONError(ex);
         }
     }
+
+    /**
+     * Returns all the annotations for a particular node
+     * @param nodeName name of the node of interest
+     */
+    public Map<String, String> getAnnotationsForNode(
+        final String nodeName
+    ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
+        var fn = "getAnnotationsForNode";
+        _logger.trace("Entering %s nodeName=%s", fn, nodeName);
+
+        var mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        var suffix = "nodes/" + nodeName;
+        var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            throw new K8SHTTPError(response.statusCode());
+        }
+
+        try {
+            var node = mapper.readValue((String) response.body(), NodePayload.class);
+            var result = node.metadata.annotations;
+            _logger.trace("Exiting %s with result %s", fn, result);
+            return result;
+        } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
+            throw new K8SJSONError(ex);
+        }
+    }
+
+    public void createConfigMapEntry(
+        final String namespace,
+        final String name,
+        final String value
+    ) throws K8SRequestError, K8SHTTPError {
+
+    } /* put */
 
     /**
      * Uncordons the indicated node, preventing future scheduling of pods there-upon.
@@ -232,7 +273,7 @@ public class K8SClient {
         final String nodeName
     ) throws K8SRequestError, K8SHTTPError {
         var fn = "uncordonNode";
-        _logger.tracef("Entering %s nodeName=%s", fn, nodeName);
+        _logger.trace("Entering %s nodeName=%s", fn, nodeName);
 
         var suffix = "nodes/" + nodeName;
         var spec = new NodeSpec().setUnschedulable(null);
@@ -243,7 +284,7 @@ public class K8SClient {
             throw ex;
         }
 
-        _logger.tracef("Exiting %s", fn);
+        _logger.trace("Exiting %s", fn);
     }
 
     private HttpResponse<?> send(
@@ -299,9 +340,9 @@ public class K8SClient {
         }
 
         var httpRequest = builder.build();
-        _logger.tracef("===>%s:%s", method, fullPath);
+        _logger.trace("===>%s:%s", method, fullPath);
         if (body != null) {
-            _logger.tracef("===>%s", body);
+            _logger.trace("===>%s", body);
         }
 
         var responseHandler =
@@ -313,9 +354,9 @@ public class K8SClient {
 
         try {
             var response = _httpClient.send(httpRequest, responseHandler);
-            _logger.tracef("<==={}", response.toString());
+            _logger.trace("<===%s", response.toString());
             if (response.body() != null) {
-                _logger.tracef("<==={}", response.body().toString());
+                _logger.trace("<===%s", response.body().toString());
             }
             return response;
         } catch (InterruptedException | IOException ex) {
