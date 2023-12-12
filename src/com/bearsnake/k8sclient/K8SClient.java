@@ -129,6 +129,52 @@ public class K8SClient {
     }
 
     /**
+     * Creates a config map for a particular name within a particular namespace.
+     * payload.metadata.namespace must be initialized to an existing namespace.
+     * If no other namespace applies, then "default" should be used.
+     * payload.metadata.name must be initialized to the name for the configmap, which must be formatted like a subdomain.
+     */
+    public void createConfigMap(
+        final ConfigMapPayload payload
+    ) throws K8SHTTPError, K8SRequestError {
+        var fn = "createConfigMap";
+        _logger.trace("Entering %s payload=%s", fn, payload);
+
+        payload.kind = "ConfigMap";
+        payload.apiVersion = "v1";
+        var suffix = "namespaces/" + payload.metadata.namespace + "/configmaps";
+        var response = send(POST, suffix, HttpBodyType.Json, payload, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            var ex = new K8SHTTPError(response.statusCode());
+            _logger.throwing(ex);
+            throw ex;
+        }
+
+        _logger.trace("Exiting %s", fn);
+    }
+
+    /**
+     * Deletes a config map for a particular name within a particular namespace.
+     */
+    public void deleteConfigMap(
+        final String namespace,
+        final String name
+    ) throws K8SHTTPError, K8SRequestError {
+        var fn = "deleteConfigMap";
+        _logger.trace("Entering %s namespace=%s name=%s", fn, namespace, name);
+
+        var suffix = "namespaces/" + namespace + "/configmaps/" + name;
+        var response = send(DELETE, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            var ex = new K8SHTTPError(response.statusCode());
+            _logger.throwing(ex);
+            throw ex;
+        }
+
+        _logger.trace("Exiting %s", fn);
+    }
+
+    /**
      * Evicts all pods which are not within a known system namespace...
      * @param nodeName name of the node which we are evicting pods from
      * @param allPods if true, we evict all pods, including those in system namespaces.
@@ -202,6 +248,36 @@ public class K8SClient {
     /**
      * Returns a collection of NodeEntity objects representing the nodes known to K8S
      */
+    public ConfigMapPayload getConfigMap(
+        final String namespace,
+        final String name
+    ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
+        var fn = "getConfigMap";
+        _logger.trace("Entering %s namespace=%s name=%s", fn, namespace, name);
+
+        var mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        var suffix = "namespaces/" + namespace + "/configmaps/" + name;
+        var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            throw new K8SHTTPError(response.statusCode());
+        }
+
+        try {
+            var configMap = mapper.readValue((String) response.body(), ConfigMapPayload.class);
+            _logger.trace("Exiting %s", fn);
+            return configMap;
+        } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
+            throw new K8SJSONError(ex);
+        }
+    }
+
+    /**
+     * Returns a collection of NodeEntity objects representing the nodes known to K8S
+     */
     public Collection<NodeEntity> getNodes() throws K8SRequestError, K8SHTTPError, K8SJSONError {
         var fn = "getNodes";
         _logger.trace("Entering %s", fn);
@@ -257,14 +333,6 @@ public class K8SClient {
         }
     }
 
-    public void createConfigMapEntry(
-        final String namespace,
-        final String name,
-        final String value
-    ) throws K8SRequestError, K8SHTTPError {
-
-    } /* put */
-
     /**
      * Uncordons the indicated node, preventing future scheduling of pods there-upon.
      * @param nodeName name of the node we are un-cordoning
@@ -278,6 +346,31 @@ public class K8SClient {
         var suffix = "nodes/" + nodeName;
         var spec = new NodeSpec().setUnschedulable(null);
         var response = send(PATCH, suffix, HttpBodyType.Json, spec, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            var ex = new K8SHTTPError(response.statusCode());
+            _logger.throwing(ex);
+            throw ex;
+        }
+
+        _logger.trace("Exiting %s", fn);
+    }
+
+    /**
+     * Updates a config map for a particular name within a particular namespace.
+     * payload.metadata.namespace must be initialized to an existing namespace.
+     * If no other namespace applies, then "default" should be used.
+     * payload.metadata.name must be initialized to the name for the configmap, which must be formatted like a subdomain.
+     */
+    public void updateConfigMap(
+        final ConfigMapPayload payload
+    ) throws K8SHTTPError, K8SRequestError {
+        var fn = "updateConfigMap";
+        _logger.trace("Entering %s payload=%s", fn, payload);
+
+        payload.kind = "ConfigMap";
+        payload.apiVersion = "v1";
+        var suffix = "namespaces/" + payload.metadata.namespace + "/configmaps/" + payload.metadata.name;
+        var response = send(PUT, suffix, HttpBodyType.Json, payload, HttpBodyType.Json);
         if (!isSuccessful(response.statusCode())) {
             var ex = new K8SHTTPError(response.statusCode());
             _logger.throwing(ex);

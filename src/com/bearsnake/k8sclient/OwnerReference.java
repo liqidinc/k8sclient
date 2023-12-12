@@ -5,8 +5,10 @@
 package com.bearsnake.k8sclient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OwnerReference {
 
     public String apiVersion;
@@ -16,5 +18,16 @@ public class OwnerReference {
     public String controller;
     public boolean blockOwnerDeletion;
 
-    public OwnerReference() {}
+    @Override
+    public String toString() {
+        var sb = new StringBuilder();
+        sb.append("{apiVersion=\"").append(apiVersion)
+          .append("\n, kind=\"").append(kind)
+          .append("\", name=\"").append(name)
+          .append("\", uid=\"").append(uid)
+          .append("\", controller=\"").append(controller)
+          .append("\", blockOwnerDeletion=").append(blockOwnerDeletion)
+          .append("}");
+        return sb.toString();
+    }
 }
