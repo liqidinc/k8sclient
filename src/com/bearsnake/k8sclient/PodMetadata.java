@@ -43,6 +43,11 @@ public class PodMetadata extends NamespacedMetadata {
         this.ownerReferences = new LinkedList<>(ownerReferences);
     }
 
+    public PodMetadata setAnnotations(final Map<String, String> map) { annotations = new HashMap<>(map); return this; }
+    public PodMetadata setGenerateName(final String value) { generateName = value; return this; }
+    public PodMetadata setLabels(final Map<String, String> map) { labels = new HashMap<>(map); return this; }
+    public PodMetadata setOwnerReferences(final Collection<OwnerReference> list) { ownerReferences = new LinkedList<>(list); return this; }
+
     public void clean() {
         super.clean();
         generateName = null;

@@ -29,6 +29,8 @@ public class NamespacedMetadata extends GenericMetadata {
         this.namespace = namespace;
     }
 
+    public NamespacedMetadata setNamespace(final String value) { namespace = value; return this; }
+
     public void clean() {
         super.clean();
         namespace = null;

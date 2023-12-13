@@ -37,6 +37,12 @@ public abstract class GenericMetadata {
         this.managedFields = new LinkedList<>(managedFields);
     }
 
+    public GenericMetadata setName(final String value) { name = value; return this; }
+    public GenericMetadata setUid(final String value) { uid = value; return this; }
+    public GenericMetadata setResourceVersion(final String value) { resourceVersion = value; return this; }
+    public GenericMetadata setCreationTimestamp(final String value) { creationTimestamp = value; return this; }
+    public GenericMetadata setManagedFields(final Collection<ManagedField> list) { managedFields = new LinkedList<>(list); return this; }
+
     public void clean() {
         creationTimestamp = null;
         managedFields = null;
