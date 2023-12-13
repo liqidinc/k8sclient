@@ -4,7 +4,9 @@
 
 package com.bearsnake.k8sclient;
 
+// TODO do we need this?
 public class K8SException extends Exception {
+
     public K8SException(
         final String message
     ) {

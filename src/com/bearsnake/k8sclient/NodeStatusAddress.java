@@ -14,6 +14,21 @@ public class NodeStatusAddress {
     public String type;
     public String address;
 
+    public NodeStatusAddress() {}
+
+    public NodeStatusAddress(
+        final String type,
+        final String address
+    ) {
+        this.type = type;
+        this.address = address;
+    }
+
+    public void clean() {
+        type = null;
+        address = null;
+    }
+
     @Override
     public String toString() {
         var sb = new StringBuilder();

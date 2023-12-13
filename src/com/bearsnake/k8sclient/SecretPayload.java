@@ -14,12 +14,33 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SecretPayload extends TypedEntity implements NamedEntity, NameSpacedEntity {
 
-    public Map<String, String> data = new HashMap<>();
-    public NamespacedMetadata metadata = new NamespacedMetadata();
+    public static final String API_VERSION = "v1";
+    public static final String KIND = "Secret";
+
+    public Map<String, String> data;
+    public NamespacedMetadata metadata;
     public String type;
 
     public SecretPayload() {
-        super("v1", "Secret");
+        super(API_VERSION, KIND);
+    }
+
+    public SecretPayload(
+        final NamespacedMetadata metadata,
+        final String type,
+        final Map<String, String> data
+    ) {
+        super(API_VERSION, KIND);
+        this.metadata = metadata;
+        this.type = type;
+        this.data = new HashMap<>(data);
+    }
+
+    public void clean() {
+        super.clean();
+        data = null;
+        metadata = null;
+        type = null;
     }
 
     @Override

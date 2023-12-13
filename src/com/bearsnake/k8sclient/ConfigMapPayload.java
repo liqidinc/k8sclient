@@ -14,11 +14,28 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ConfigMapPayload extends TypedEntity implements NamedEntity, NameSpacedEntity {
 
+    public static String API_VERSION = "v1";
+    public static String KIND = "Node";
+
     public Map<String, String> data = new HashMap<>();
     public NamespacedMetadata metadata = new NamespacedMetadata();
 
     public ConfigMapPayload() {
-        super("v1", "ConfigMap");
+        super(API_VERSION, KIND);
+    }
+
+    public ConfigMapPayload(
+        final NamespacedMetadata metadata,
+        final Map<String, String> data
+    ) {
+        super(API_VERSION, KIND);
+        this.metadata = metadata;
+        this.data = data;
+    }
+
+    public void clear() {
+        data = null;
+        metadata = null;
     }
 
     @Override

@@ -11,9 +11,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Pod implements NamedEntity {
 
-    public PodMetadata metadata = new PodMetadata();
-    public PodSpec spec = new PodSpec();
-    public PodStatus status = new PodStatus();
+    public PodMetadata metadata;
+    public PodSpec spec;
+    public PodStatus status;
+
+    public Pod() {}
+
+    public Pod(
+        final PodMetadata metadata,
+        final PodSpec spec,
+        final PodStatus status
+    ) {
+        this.metadata = metadata;
+        this.spec = spec;
+        this.status = status;
+    }
+
+    public void clean() {
+        metadata = null;
+        spec = null;
+        status = null;
+    }
 
     @Override
     public String getName() { return metadata.name; }

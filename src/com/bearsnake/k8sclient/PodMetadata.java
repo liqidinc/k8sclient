@@ -7,6 +7,7 @@ package com.bearsnake.k8sclient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,10 +17,39 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PodMetadata extends NamespacedMetadata {
 
-    public Map<String, String> annotations = new HashMap<>();
+    public Map<String, String> annotations;
     public String generateName;
-    public Map<String, String> labels = new HashMap<>();
-    public List<OwnerReference> ownerReferences = new LinkedList<>();
+    public Map<String, String> labels;
+    public List<OwnerReference> ownerReferences;
+
+    public PodMetadata() {}
+
+    public PodMetadata(
+        final String namespace,
+        final String name,
+        final String uid,
+        final String resourceVersion,
+        final String creationTimestamp,
+        final Collection<ManagedField> managedFields,
+        final String generateName,
+        final Map<String, String> annotations,
+        final Map<String, String> labels,
+        final Collection<OwnerReference> ownerReferences
+    ) {
+        super(namespace, name, uid, resourceVersion, creationTimestamp, managedFields);
+        this.generateName = generateName;
+        this.annotations = new HashMap<>(annotations);
+        this.labels = new HashMap<>(labels);
+        this.ownerReferences = new LinkedList<>(ownerReferences);
+    }
+
+    public void clean() {
+        super.clean();
+        generateName = null;
+        annotations = null;
+        labels = null;
+        ownerReferences = null;
+    }
 
     @Override
     public String toString() {

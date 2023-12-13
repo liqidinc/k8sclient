@@ -11,9 +11,34 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PodPayload extends TypedEntity {
 
-    public PodMetadata metadata = new PodMetadata();
-    public PodSpec spec = new PodSpec();
-    public PodStatus status = new PodStatus();
+    public static final String API_VERSION = "v1";
+    public static final String KIND = "PodPayload";
+
+    public PodMetadata metadata;
+    public PodSpec spec;
+    public PodStatus status;
+
+    public PodPayload() {
+        super(API_VERSION, KIND);
+    }
+
+    public PodPayload(
+        final PodMetadata metadata,
+        final PodSpec spec,
+        final PodStatus status
+    ) {
+        super(API_VERSION, KIND);
+        this.metadata = metadata;
+        this.spec = spec;
+        this.status = status;
+    }
+
+    public void clean() {
+        super.clean();
+        metadata = null;
+        spec = null;
+        status = null;
+    }
 
     @Override
     public String toString() {

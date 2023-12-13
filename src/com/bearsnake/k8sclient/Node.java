@@ -15,6 +15,24 @@ public class Node implements NamedEntity {
     public NodeSpec spec = new NodeSpec();
     public NodeStatus status = new NodeStatus();
 
+    public Node() {}
+
+    public Node(
+        final NodeMetadata metadata,
+        final NodeSpec spec,
+        final NodeStatus status
+    ) {
+        this.metadata = metadata;
+        this.spec = spec;
+        this.status = status;
+    }
+
+    public void clean() {
+        metadata = null;
+        spec = null;
+        status = null;
+    }
+
     @Override
     public String getName() { return metadata.name; }
 

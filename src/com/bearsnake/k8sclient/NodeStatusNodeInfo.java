@@ -22,6 +22,45 @@ public class NodeStatusNodeInfo {
     public String operatingSystem;
     public String architecture;
 
+    public NodeStatusNodeInfo() {}
+
+    public NodeStatusNodeInfo(
+        final String machineId,
+        final String systemUUID,
+        final String bootId,
+        final String kernelVersion,
+        final String osImage,
+        final String containerRuntimeVersion,
+        final String kubeletVersion,
+        final String kubeProxyVersion,
+        final String operatingSystem,
+        final String architecture
+    ) {
+        this.machineID = machineId;
+        this.systemUUID = systemUUID;
+        this.bootID = bootId;
+        this.kernelVersion = kernelVersion;
+        this.osImage = osImage;
+        this.containerRuntimeVersion = containerRuntimeVersion;
+        this.kubeletVersion = kubeletVersion;
+        this.kubeProxyVersion = kubeProxyVersion;
+        this.operatingSystem = operatingSystem;
+        this.architecture = architecture;
+    }
+
+    public void clean() {
+        machineID = null;
+        systemUUID = null;
+        bootID = null;
+        kernelVersion = null;
+        osImage = null;
+        containerRuntimeVersion = null;
+        kubeletVersion = null;
+        kubeProxyVersion = null;
+        operatingSystem = null;
+        architecture = null;
+    }
+
     @Override
     public String toString() {
         var sb = new StringBuilder();

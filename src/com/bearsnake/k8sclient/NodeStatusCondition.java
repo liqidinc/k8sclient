@@ -18,6 +18,33 @@ public class NodeStatusCondition {
     public String reason;
     public String message;
 
+    public NodeStatusCondition() {}
+
+    public NodeStatusCondition(
+        final String type,
+        final String status,
+        final String lastHeartbeatTime,
+        final String lastTransitionTime,
+        final String reason,
+        final String message
+    ) {
+        this.type = type;
+        this.status = status;
+        this.lastHeartbeatTime = lastHeartbeatTime;
+        this.lastTransitionTime = lastTransitionTime;
+        this.reason = reason;
+        this.message = message;
+    }
+
+    public void clean() {
+        type = null;
+        status = null;
+        lastHeartbeatTime = null;
+        lastTransitionTime = null;
+        reason = null;
+        message = null;
+    }
+
     @Override
     public String toString() {
         var sb = new StringBuilder();

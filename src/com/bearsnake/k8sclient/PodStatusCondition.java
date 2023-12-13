@@ -15,6 +15,24 @@ public class PodStatusCondition {
     public String status;
     public String lastTransitionTime;
 
+    public PodStatusCondition() {}
+
+    public PodStatusCondition(
+        final String type,
+        final String status,
+        final String lastTransitionTime
+    ) {
+        this.type = type;
+        this.status = status;
+        this.lastTransitionTime = lastTransitionTime;
+    }
+
+    public void clean() {
+        type = null;
+        status = null;
+        lastTransitionTime = null;
+    }
+
     @Override
     public String toString() {
         var sb = new StringBuilder();

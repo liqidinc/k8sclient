@@ -24,6 +24,8 @@ public abstract class TypedEntity {
         this.kind = kind;
     }
 
+    public void clean() {} // we don't clean our stuff, since it is pretty specific.
+
     @Override
     public String toString() {
         return "{apiVersion=\"" + apiVersion + "\", kind=\"" + kind + "\"}";

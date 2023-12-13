@@ -7,6 +7,7 @@ package com.bearsnake.k8sclient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +22,30 @@ public class NodeStatus {
     public List<NodeStatusCondition> conditions = new LinkedList<>();
     public List<NodeStatusAddress> addresses = new LinkedList<>();
     public NodeStatusNodeInfo nodeInfo = new NodeStatusNodeInfo();
+
+    public NodeStatus() {}
+
+    public NodeStatus(
+        final NodeStatusNodeInfo nodeInfo,
+        final Map<String, String> capacity,
+        final Map<String, String> allocatable,
+        final Collection<NodeStatusCondition> conditions,
+        final Collection<NodeStatusAddress> addresses
+    ) {
+        this.nodeInfo = nodeInfo;
+        this.capacity = new HashMap<>(capacity);
+        this.allocatable = new HashMap<>(allocatable);
+        this.conditions = new LinkedList<>(conditions);
+        this.addresses = new LinkedList<>(addresses);
+    }
+
+    public void clean() {
+        nodeInfo = null;
+        capacity = null;
+        allocatable = null;
+        conditions = null;
+        addresses = null;
+    }
 
     @Override
     public String toString() {

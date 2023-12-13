@@ -264,6 +264,7 @@ public class K8SClient {
                 deletedPods.add(new PodIdentifier(nameSpace, podName));
             }
         } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
             throw new K8SJSONError(ex);
         }
 
@@ -312,7 +313,7 @@ public class K8SClient {
         try {
             var node = mapper.readValue((String) response.body(), NodePayload.class);
             var result = node.metadata.annotations;
-            _logger.trace("Exiting %s with result %s", fn, result);
+            _logger.trace("Exiting %s with %s", fn, result);
             return result;
         } catch (JsonProcessingException ex) {
             _logger.catching(ex);
@@ -342,8 +343,37 @@ public class K8SClient {
 
         try {
             var configMap = mapper.readValue((String) response.body(), ConfigMapPayload.class);
-            _logger.trace("Exiting %s", fn);
+            _logger.trace("Exiting %s with %s", fn, configMap);
             return configMap;
+        } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
+            throw new K8SJSONError(ex);
+        }
+    }
+
+    /**
+     * Retrieves a Node object for a specific node, by name
+     */
+    public Node getNode(
+        final String nodeName
+    ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
+        var fn = "getNode";
+        _logger.trace("Entering %s nodeName=%s", fn, nodeName);
+
+        var mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        var suffix = "node/" + nodeName;
+        var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            throw new K8SHTTPError(response.statusCode());
+        }
+
+        try {
+            var node = mapper.readValue((String) response.body(), Node.class);
+            _logger.trace("Exiting %s with %s", fn, node);
+            return node;
         } catch (JsonProcessingException ex) {
             _logger.catching(ex);
             throw new K8SJSONError(ex);
@@ -369,7 +399,7 @@ public class K8SClient {
 
         try {
             var nodeList = mapper.readValue((String) response.body(), NodeListPayload.class);
-            _logger.trace("Exiting %s", fn);
+            _logger.trace("Exiting %s with %s", fn, nodeList);
             return nodeList.items;
         } catch (JsonProcessingException ex) {
             _logger.catching(ex);

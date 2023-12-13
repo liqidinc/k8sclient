@@ -7,15 +7,37 @@ package com.bearsnake.k8sclient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NodeMetadata extends GenericMetadata {
 
-    public Map<String, String> annotations = new HashMap<>();
-    public Map<String, String> labels = new HashMap<>();
+    public Map<String, String> annotations;
+    public Map<String, String> labels;
+
+    public NodeMetadata() {}
+
+    public NodeMetadata(
+        String name,
+        String uid,
+        String resourceVersion,
+        String creationTimestamp,
+        Collection<ManagedField> managedFields,
+        Map<String, String> annotations,
+        Map<String, String> labels
+    ) {
+        super(name, uid, resourceVersion, creationTimestamp, managedFields);
+        this.annotations = annotations;
+        this.labels = labels;
+    }
+
+    public void clean() {
+        super.clean();
+        annotations = null;
+        labels = null;
+    }
 
     @Override
     public String toString() {

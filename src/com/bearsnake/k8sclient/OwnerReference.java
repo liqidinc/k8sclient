@@ -14,7 +14,28 @@ public class OwnerReference extends TypedEntity {
     public String name;
     public String uid;
     public String controller;
-    public boolean blockOwnerDeletion;
+    public Boolean blockOwnerDeletion;
+
+    public OwnerReference() {}
+
+    public OwnerReference(
+        final String name,
+        final String uid,
+        final String controller,
+        final boolean blockOwnerDeletion
+    ) {
+        this.name = name;
+        this.uid = uid;
+        this.controller = controller;
+        this.blockOwnerDeletion = blockOwnerDeletion;
+    }
+
+    public void clean() {
+        name = null;
+        uid = null;
+        controller = null;
+        blockOwnerDeletion = null;
+    }
 
     @Override
     public String toString() {

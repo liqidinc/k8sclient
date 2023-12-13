@@ -13,6 +13,18 @@ public class PodSpecVolume {
 
     public String name;
 
+    public PodSpecVolume() {}
+
+    public PodSpecVolume(
+        final String name
+    ) {
+        this.name = name;
+    }
+
+    public void clean() {
+        name = null;
+    }
+
     @Override
     public String toString() {
         return "{name=\"" + name + "\"}";

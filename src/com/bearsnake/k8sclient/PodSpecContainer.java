@@ -14,6 +14,21 @@ public class PodSpecContainer {
     public String name;
     public String image;
 
+    public PodSpecContainer() {}
+
+    public PodSpecContainer(
+        final String name,
+        final String image
+    ) {
+        this.name = name;
+        this.image = image;
+    }
+
+    public void clean() {
+        name = null;
+        image = null;
+    }
+
     @Override
     public String toString() {
         return "{name=\"" + name + "\", image=\"" + image + "\"}";

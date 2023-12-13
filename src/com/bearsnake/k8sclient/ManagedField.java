@@ -23,6 +23,31 @@ public class ManagedField {
 
     public ManagedField() {}
 
+    public ManagedField(
+        final String manager,
+        final String operation,
+        final String apiVersion,
+        final String time,
+        final String fieldsType,
+        final Map<String, Object> fieldsV1
+    ) {
+        this.manager = manager;
+        this.operation = operation;
+        this.apiVersion = apiVersion;
+        this.time = time;
+        this.fieldsType = fieldsType;
+        this.fieldsV1 = new HashMap<>(fieldsV1);
+    }
+
+    public void clean() {
+        manager = null;
+        operation = null;
+        apiVersion = null;
+        time = null;
+        fieldsType = null;
+        fieldsV1 = null;
+    }
+
     @Override
     public String toString() {
         var sb = new StringBuilder();

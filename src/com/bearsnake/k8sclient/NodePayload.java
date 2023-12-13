@@ -11,11 +11,34 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NodePayload extends TypedEntity {
 
-    public NodeMetadata metadata = new NodeMetadata();
-    public NodeSpec spec = new NodeSpec();
-    public NodeStatus status = new NodeStatus();
+    public static String API_VERSION = "v1";
+    public static String KIND = "Node";
 
-    public NodePayload() {}
+    public NodeMetadata metadata;
+    public NodeSpec spec;
+    public NodeStatus status;
+
+    public NodePayload() {
+        super(API_VERSION, KIND);
+    }
+
+    public NodePayload(
+        final NodeMetadata metadata,
+        final NodeSpec spec,
+        final NodeStatus status
+    ) {
+        super(API_VERSION, KIND);
+        this.metadata = metadata;
+        this.spec = spec;
+        this.status = status;
+    }
+
+    public void clean() {
+        super.clean();
+        metadata = null;
+        spec = null;
+        status = null;
+    }
 
     @Override
     public String toString() {
