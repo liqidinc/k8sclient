@@ -88,7 +88,7 @@ public class K8SClient {
 
     public K8SClient setTimeoutInSeconds(final int value) { _timeoutInSeconds = value; return this; }
 
-    private boolean isSuccessful(
+    private static boolean isSuccessful(
         final int responseCode
     ) {
         return responseCode >= 200 && responseCode <= 299;
@@ -154,6 +154,29 @@ public class K8SClient {
     }
 
     /**
+     * Creates a secret for a particular name within a particular namespace.
+     * payload.metadata.namespace must be initialized to an existing namespace.
+     * If no other namespace applies, then "default" should be used.
+     * payload.metadata.name must be initialized to the name for the configmap, which must be formatted like a subdomain.
+     */
+    public void createSecret(
+        final SecretPayload payload
+    ) throws K8SHTTPError, K8SRequestError {
+        var fn = "createSecret";
+        _logger.trace("Entering %s payload=%s", fn, payload);
+
+        var suffix = "namespaces/" + payload.metadata.namespace + "/secrets";
+        var response = send(POST, suffix, HttpBodyType.Json, payload, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            var ex = new K8SHTTPError(response.statusCode());
+            _logger.throwing(ex);
+            throw ex;
+        }
+
+        _logger.trace("Exiting %s", fn);
+    }
+
+    /**
      * Deletes a config map for a particular name within a particular namespace.
      */
     public void deleteConfigMap(
@@ -164,6 +187,27 @@ public class K8SClient {
         _logger.trace("Entering %s namespace=%s name=%s", fn, namespace, name);
 
         var suffix = "namespaces/" + namespace + "/configmaps/" + name;
+        var response = send(DELETE, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            var ex = new K8SHTTPError(response.statusCode());
+            _logger.throwing(ex);
+            throw ex;
+        }
+
+        _logger.trace("Exiting %s", fn);
+    }
+
+    /**
+     * Deletes a secret for a particular name within a particular namespace.
+     */
+    public void deleteSecret(
+        final String namespace,
+        final String name
+    ) throws K8SHTTPError, K8SRequestError {
+        var fn = "deleteSecret";
+        _logger.trace("Entering %s namespace=%s name=%s", fn, namespace, name);
+
+        var suffix = "namespaces/" + namespace + "/secrets/" + name;
         var response = send(DELETE, suffix, HttpBodyType.None, null, HttpBodyType.Json);
         if (!isSuccessful(response.statusCode())) {
             var ex = new K8SHTTPError(response.statusCode());
@@ -246,7 +290,38 @@ public class K8SClient {
     }
 
     /**
-     * Returns a collection of NodeEntity objects representing the nodes known to K8S
+     * Returns all the annotations for a particular node
+     * @param nodeName name of the node of interest
+     */
+    public Map<String, String> getAnnotationsForNode(
+        final String nodeName
+    ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
+        var fn = "getAnnotationsForNode";
+        _logger.trace("Entering %s nodeName=%s", fn, nodeName);
+
+        var mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        var suffix = "nodes/" + nodeName;
+        var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            throw new K8SHTTPError(response.statusCode());
+        }
+
+        try {
+            var node = mapper.readValue((String) response.body(), NodePayload.class);
+            var result = node.metadata.annotations;
+            _logger.trace("Exiting %s with result %s", fn, result);
+            return result;
+        } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
+            throw new K8SJSONError(ex);
+        }
+    }
+
+    /**
+     * Returns a config map given its namespace and name.
      */
     public ConfigMapPayload getConfigMap(
         final String namespace,
@@ -303,30 +378,29 @@ public class K8SClient {
     }
 
     /**
-     * Returns all the annotations for a particular node
-     * @param nodeName name of the node of interest
+     * Returns a secret given its namespace and name.
      */
-    public Map<String, String> getAnnotationsForNode(
-        final String nodeName
+    public ConfigMapPayload getSecret(
+        final String namespace,
+        final String name
     ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
-        var fn = "getAnnotationsForNode";
-        _logger.trace("Entering %s nodeName=%s", fn, nodeName);
+        var fn = "getSecret";
+        _logger.trace("Entering %s namespace=%s name=%s", fn, namespace, name);
 
         var mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
-        var suffix = "nodes/" + nodeName;
+        var suffix = "namespaces/" + namespace + "/secrets/" + name;
         var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
         if (!isSuccessful(response.statusCode())) {
             throw new K8SHTTPError(response.statusCode());
         }
 
         try {
-            var node = mapper.readValue((String) response.body(), NodePayload.class);
-            var result = node.metadata.annotations;
-            _logger.trace("Exiting %s with result %s", fn, result);
-            return result;
+            var configMap = mapper.readValue((String) response.body(), ConfigMapPayload.class);
+            _logger.trace("Exiting %s", fn);
+            return configMap;
         } catch (JsonProcessingException ex) {
             _logger.catching(ex);
             throw new K8SJSONError(ex);
@@ -370,6 +444,31 @@ public class K8SClient {
         payload.kind = "ConfigMap";
         payload.apiVersion = "v1";
         var suffix = "namespaces/" + payload.metadata.namespace + "/configmaps/" + payload.metadata.name;
+        var response = send(PUT, suffix, HttpBodyType.Json, payload, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            var ex = new K8SHTTPError(response.statusCode());
+            _logger.throwing(ex);
+            throw ex;
+        }
+
+        _logger.trace("Exiting %s", fn);
+    }
+
+    /**
+     * Updates a secret for a particular name within a particular namespace.
+     * payload.metadata.namespace must be initialized to an existing namespace.
+     * If no other namespace applies, then "default" should be used.
+     * payload.metadata.name must be initialized to the name for the configmap, which must be formatted like a subdomain.
+     */
+    public void updateSecret(
+        final SecretPayload payload
+    ) throws K8SHTTPError, K8SRequestError {
+        var fn = "updateSecret";
+        _logger.trace("Entering %s payload=%s", fn, payload);
+
+        payload.kind = "Secret";
+        payload.apiVersion = "v1";
+        var suffix = "namespaces/" + payload.metadata.namespace + "/secrets/" + payload.metadata.name;
         var response = send(PUT, suffix, HttpBodyType.Json, payload, HttpBodyType.Json);
         if (!isSuccessful(response.statusCode())) {
             var ex = new K8SHTTPError(response.statusCode());

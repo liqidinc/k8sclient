@@ -12,7 +12,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class NodeListPayload extends Payload {
+public class NodeListPayload extends TypedEntity {
 
     public List<NodeEntity> items = new LinkedList<>();
 
@@ -20,18 +20,9 @@ public class NodeListPayload extends Payload {
 
     @Override
     public String toString() {
-        var sb = new StringBuilder();
-        sb.append("{kind=\"").append(kind)
-          .append("\", apiVersion=\"").append(apiVersion).append("\"");
-
-        sb.append(", items=[");
-        var first = true;
-        for (var item : items) {
-            if (first) { sb.append(", "); }
-            sb.append(item.toString());
-            first = false;
-        }
-        sb.append("]}");
-        return sb.toString();
+        var str = super.toString();
+        str = str.substring(0, str.length() - 1);
+        str += ", items=" + items + "}";
+        return str;
     }
 }

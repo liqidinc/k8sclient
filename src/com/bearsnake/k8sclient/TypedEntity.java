@@ -9,10 +9,23 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class Payload {
+public abstract class TypedEntity {
 
-    public String kind;
     public String apiVersion;
+    public String kind;
 
-    protected Payload() {}
+    public TypedEntity() {}
+
+    public TypedEntity(
+        final String apiVersion,
+        final String kind
+    ) {
+        this.apiVersion = apiVersion;
+        this.kind = kind;
+    }
+
+    @Override
+    public String toString() {
+        return "{apiVersion=\"" + apiVersion + "\", kind=\"" + kind + "\"}";
+    }
 }

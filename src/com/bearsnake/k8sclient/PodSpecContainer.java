@@ -16,10 +16,6 @@ public class PodSpecContainer {
 
     @Override
     public String toString() {
-        var sb = new StringBuilder();
-        sb.append("{name=\"").append(name)
-          .append("\", image=\"").append(image)
-          .append("\"}");
-        return sb.toString();
+        return "{name=\"" + name + "\", image=\"" + image + "\"}";
     }
 }

@@ -7,22 +7,17 @@ package com.bearsnake.k8sclient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.LinkedList;
-import java.util.List;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PodListPayload extends TypedEntity {
+public class NamespacedMetadata extends GenericMetadata {
 
-    public List<PodEntity> items = new LinkedList<>();
-
-    public PodListPayload() {}
+    public String namespace;
 
     @Override
     public String toString() {
         var str = super.toString();
         str = str.substring(0, str.length() - 1);
-        str += ", items=" + items + "}";
+        str += ", namespace=\"" + namespace + "\"" + "}";
         return str;
     }
 }

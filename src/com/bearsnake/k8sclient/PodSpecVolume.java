@@ -15,8 +15,6 @@ public class PodSpecVolume {
 
     @Override
     public String toString() {
-        var sb = new StringBuilder();
-        sb.append("{name=\"").append(name).append("\"}");
-        return sb.toString();
+        return "{name=\"" + name + "\"}";
     }
 }

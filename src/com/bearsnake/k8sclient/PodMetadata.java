@@ -14,33 +14,21 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PodMetadata {
+public class PodMetadata extends NamespacedMetadata {
 
-    public String name;
-    public String generateName;
-    public String namespace;
-    public String uid;
-    public String resourceVersion;
-    public String creationTimestamp;
-    public Map<String, String> labels = new HashMap<>();
     public Map<String, String> annotations = new HashMap<>();
+    public String generateName;
+    public Map<String, String> labels = new HashMap<>();
     public List<OwnerReference> ownerReferences = new LinkedList<>();
-    public List<ManagedField> managedFields = new LinkedList<>();
 
     @Override
     public String toString() {
-        var sb = new StringBuilder();
-        sb.append("{name=\"").append(name)
-          .append("\", generateName=\"").append(generateName)
-          .append("\", namespace=\"").append(namespace)
-          .append("\", uid=\"").append(uid)
-          .append("\", resourceVersion=\"").append(resourceVersion)
-          .append("\", creationTimestamp=\"").append(creationTimestamp)
-          .append("\", labels=").append(labels)
-          .append(", annotations=").append(annotations)
-          .append(", ownerReferences=").append(ownerReferences)
-          .append(", managedFields=").append(managedFields)
-          .append("}");
-        return sb.toString();
+        var str = super.toString();
+        str = str.substring(0, str.length() - 1);
+        str += ", annotations=" + annotations;
+        str += ", labels=" + labels;
+        str += ", generateName=" + generateName + "\"";
+        str += ", ownerReferences=" + ownerReferences + "}";
+        return str;
     }
 }

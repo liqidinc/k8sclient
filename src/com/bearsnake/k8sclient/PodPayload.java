@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PodPayload extends Payload {
+public class PodPayload extends TypedEntity {
 
     public PodMetadata metadata = new PodMetadata();
     public PodSpec spec = new PodSpec();
@@ -17,13 +17,11 @@ public class PodPayload extends Payload {
 
     @Override
     public String toString() {
-        var sb = new StringBuilder();
-        sb.append("{kind=\"").append(kind)
-          .append("\", apiVersion=\"").append(apiVersion).append("\"");
-        sb.append(", metadata=").append(metadata)
-          .append(", spec=").append(spec)
-          .append(", status=").append(status)
-          .append("}");
-        return sb.toString();
+        var str = super.toString();
+        str = str.substring(0, str.length() - 1);
+        str += ", metadata=" + metadata;
+        str += ", spec=" + spec;
+        str += ", status=" + status + "}";
+        return str;
     }
 }

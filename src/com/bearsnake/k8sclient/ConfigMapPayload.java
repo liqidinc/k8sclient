@@ -12,19 +12,20 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ConfigMapPayload extends Payload {
+public class ConfigMapPayload extends TypedEntity {
 
-    public ConfigMapMetadata metadata = new ConfigMapMetadata();
     public Map<String, String> data = new HashMap<>();
+    public NamespacedMetadata metadata = new NamespacedMetadata();
+
+    public ConfigMapPayload() {
+        super("v1", "ConfigMap");
+    }
 
     @Override
     public String toString() {
-        var sb = new StringBuilder();
-        sb.append("{kind=\"").append(kind)
-          .append("\", apiVersion=\"").append(apiVersion).append("\"");
-        sb.append(", metadata=").append(metadata.toString())
-          .append(", data=").append(data.toString())
-          .append("}");
-        return sb.toString();
+        var str = super.toString();
+        str = str.substring(0, str.length() - 1);
+        str += ", data=" + data + ", metadata=" + metadata + "}";
+        return str;
     }
 }

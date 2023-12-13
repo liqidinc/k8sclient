@@ -17,11 +17,10 @@ public class PodEntity {
 
     @Override
     public String toString() {
-        var sb = new StringBuilder();
-        sb.append("{metadata=").append(metadata)
-          .append(", spec=").append(spec)
-          .append("status=").append(status)
-          .append("}");
-        return sb.toString();
+        var str = "{metadata=" + metadata;
+        str += ", spec=" + spec;
+        str += "status=" + status;
+        str += "}";
+        return str;
     }
 }
