@@ -33,6 +33,9 @@ public class ConfigMapPayload extends TypedEntity implements NamedEntity, NameSp
         this.data = data;
     }
 
+    public ConfigMapPayload setData(final Map<String, String> map) { data = new HashMap<>(data); return this; }
+    public ConfigMapPayload setMetadata(final NamespacedMetadata value) { metadata = value; return this; }
+
     public void clear() {
         data = null;
         metadata = null;
