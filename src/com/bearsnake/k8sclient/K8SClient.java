@@ -140,8 +140,6 @@ public class K8SClient {
         var fn = "createConfigMap";
         _logger.trace("Entering %s payload=%s", fn, payload);
 
-        payload.kind = "ConfigMap";
-        payload.apiVersion = "v1";
         var suffix = "namespaces/" + payload.metadata.namespace + "/configmaps";
         var response = send(POST, suffix, HttpBodyType.Json, payload, HttpBodyType.Json);
         if (!isSuccessful(response.statusCode())) {
@@ -454,6 +452,30 @@ public class K8SClient {
             var ex = new K8SHTTPError(response.statusCode());
             _logger.throwing(ex);
             throw ex;
+        }
+
+        _logger.trace("Exiting %s", fn);
+    }
+
+    /**
+     * Rewrites the annotation map for a particular node
+     */
+    public void updateAnnotationsForNode(
+        final String nodeName,
+        final Map<String, String> annotations
+    ) throws K8SHTTPError, K8SRequestError {
+        var fn = "updateAnnotationsForNode";
+        _logger.trace("Entering %s nodeName=%s annotations=%s", fn, nodeName, annotations);
+
+        Node node = new Node();
+        node.metadata = new NodeMetadata();
+        node.metadata.name = nodeName;
+        node.metadata.annotations = annotations;
+
+        var suffix = "nodes/" + nodeName;
+        var response = send(PATCH, suffix, HttpBodyType.Json, node, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            throw new K8SHTTPError(response.statusCode());
         }
 
         _logger.trace("Exiting %s", fn);

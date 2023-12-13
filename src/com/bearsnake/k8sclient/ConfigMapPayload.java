@@ -15,7 +15,7 @@ import java.util.Map;
 public class ConfigMapPayload extends TypedEntity implements NamedEntity, NameSpacedEntity {
 
     public static String API_VERSION = "v1";
-    public static String KIND = "Node";
+    public static String KIND = "ConfigMap";
 
     public Map<String, String> data = new HashMap<>();
     public NamespacedMetadata metadata = new NamespacedMetadata();
