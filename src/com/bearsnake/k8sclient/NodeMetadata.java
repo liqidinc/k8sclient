@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -36,6 +37,11 @@ public class NodeMetadata extends GenericMetadata {
 
     public NodeMetadata setAnnotations(final Map<String, String> map) { annotations = new HashMap<>(map); return this; }
     public NodeMetadata setLabels(final Map<String, String> map) { labels = new HashMap<>(map); return this; }
+    @Override public NodeMetadata setName(final String value) { name = value; return this; }
+    @Override public NodeMetadata setUid(final String value) { uid = value; return this; }
+    @Override public NodeMetadata setResourceVersion(final String value) { resourceVersion = value; return this; }
+    @Override public NodeMetadata setCreationTimestamp(final String value) { creationTimestamp = value; return this; }
+    @Override public NodeMetadata setManagedFields(final Collection<ManagedField> list) { managedFields = new LinkedList<>(list); return this; }
 
     public void clean() {
         super.clean();

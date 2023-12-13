@@ -36,7 +36,7 @@ public class SecretPayload extends TypedEntity implements NamedEntity, NameSpace
         this.data = new HashMap<>(data);
     }
 
-    public SecretPayload setData(final Map<String, String> map) { data = new HashMap<>(data); return this; }
+    public SecretPayload setData(final Map<String, String> map) { data = new HashMap<>(map); return this; }
     public SecretPayload setMetadata(final NamespacedMetadata value) { metadata = value; return this; }
     public SecretPayload setType(final String value) { type = value; return this; }
 

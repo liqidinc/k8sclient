@@ -47,6 +47,11 @@ public class PodMetadata extends NamespacedMetadata {
     public PodMetadata setGenerateName(final String value) { generateName = value; return this; }
     public PodMetadata setLabels(final Map<String, String> map) { labels = new HashMap<>(map); return this; }
     public PodMetadata setOwnerReferences(final Collection<OwnerReference> list) { ownerReferences = new LinkedList<>(list); return this; }
+    @Override public PodMetadata setName(final String value) { name = value; return this; }
+    @Override public PodMetadata setUid(final String value) { uid = value; return this; }
+    @Override public PodMetadata setResourceVersion(final String value) { resourceVersion = value; return this; }
+    @Override public PodMetadata setCreationTimestamp(final String value) { creationTimestamp = value; return this; }
+    @Override public PodMetadata setManagedFields(final Collection<ManagedField> list) { managedFields = new LinkedList<>(list); return this; }
 
     public void clean() {
         super.clean();
