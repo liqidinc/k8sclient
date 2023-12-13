@@ -14,7 +14,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PodListPayload extends TypedEntity {
 
-    public List<PodEntity> items = new LinkedList<>();
+    public List<Pod> items = new LinkedList<>();
 
     public PodListPayload() {}
 

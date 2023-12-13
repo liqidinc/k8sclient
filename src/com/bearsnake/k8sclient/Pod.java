@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PodEntity {
+public class Pod {
 
     public PodMetadata metadata = new PodMetadata();
     public PodSpec spec = new PodSpec();

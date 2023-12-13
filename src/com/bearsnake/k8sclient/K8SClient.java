@@ -353,7 +353,7 @@ public class K8SClient {
     /**
      * Returns a collection of NodeEntity objects representing the nodes known to K8S
      */
-    public Collection<NodeEntity> getNodes() throws K8SRequestError, K8SHTTPError, K8SJSONError {
+    public Collection<Node> getNodes() throws K8SRequestError, K8SHTTPError, K8SJSONError {
         var fn = "getNodes";
         _logger.trace("Entering %s", fn);
 
