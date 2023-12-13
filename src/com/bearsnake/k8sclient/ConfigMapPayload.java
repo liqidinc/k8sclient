@@ -12,7 +12,7 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ConfigMapPayload extends TypedEntity {
+public class ConfigMapPayload extends TypedEntity implements NamedEntity, NameSpacedEntity {
 
     public Map<String, String> data = new HashMap<>();
     public NamespacedMetadata metadata = new NamespacedMetadata();
@@ -20,6 +20,12 @@ public class ConfigMapPayload extends TypedEntity {
     public ConfigMapPayload() {
         super("v1", "ConfigMap");
     }
+
+    @Override
+    public String getName() { return metadata.name; }
+
+    @Override
+    public String getNameSpace() { return metadata.namespace; }
 
     @Override
     public String toString() {

@@ -12,7 +12,7 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SecretPayload extends TypedEntity {
+public class SecretPayload extends TypedEntity implements NamedEntity, NameSpacedEntity {
 
     public Map<String, String> data = new HashMap<>();
     public NamespacedMetadata metadata = new NamespacedMetadata();
@@ -21,6 +21,12 @@ public class SecretPayload extends TypedEntity {
     public SecretPayload() {
         super("v1", "Secret");
     }
+
+    @Override
+    public String getName() { return metadata.name; }
+
+    @Override
+    public String getNameSpace() { return metadata.namespace; }
 
     @Override
     public String toString() {

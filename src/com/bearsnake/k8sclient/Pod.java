@@ -9,11 +9,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Pod {
+public class Pod implements NamedEntity {
 
     public PodMetadata metadata = new PodMetadata();
     public PodSpec spec = new PodSpec();
     public PodStatus status = new PodStatus();
+
+    @Override
+    public String getName() { return metadata.name; }
 
     @Override
     public String toString() {

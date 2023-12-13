@@ -9,13 +9,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Node {
+public class Node implements NamedEntity {
 
     public NodeMetadata metadata = new NodeMetadata();
     public NodeSpec spec = new NodeSpec();
     public NodeStatus status = new NodeStatus();
 
-    public Node() {}
+    @Override
+    public String getName() { return metadata.name; }
 
     @Override
     public String toString() {
