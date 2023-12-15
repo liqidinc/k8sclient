@@ -362,7 +362,7 @@ public class K8SClient {
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
-        var suffix = "node/" + nodeName;
+        var suffix = "nodes/" + nodeName;
         var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
         if (!isSuccessful(response.statusCode())) {
             throw new K8SHTTPError(response.statusCode());
