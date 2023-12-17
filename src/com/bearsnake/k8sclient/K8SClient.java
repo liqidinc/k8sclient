@@ -289,37 +289,6 @@ public class K8SClient {
     }
 
     /**
-     * Returns all the annotations for a particular node
-     * @param nodeName name of the node of interest
-     */
-    public Map<String, String> getAnnotationsForNode(
-        final String nodeName
-    ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
-        var fn = "getAnnotationsForNode";
-        _logger.trace("Entering %s nodeName=%s", fn, nodeName);
-
-        var mapper = new ObjectMapper();
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
-        var suffix = "nodes/" + nodeName;
-        var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
-        if (!isSuccessful(response.statusCode())) {
-            throw new K8SHTTPError(response.statusCode());
-        }
-
-        try {
-            var node = mapper.readValue((String) response.body(), NodePayload.class);
-            var result = node.metadata.annotations;
-            _logger.trace("Exiting %s with %s", fn, result);
-            return result;
-        } catch (JsonProcessingException ex) {
-            _logger.catching(ex);
-            throw new K8SJSONError(ex);
-        }
-    }
-
-    /**
      * Returns a config map given its namespace and name.
      */
     public ConfigMapPayload getConfigMap(
@@ -408,7 +377,7 @@ public class K8SClient {
     /**
      * Returns a secret given its namespace and name.
      */
-    public ConfigMapPayload getSecret(
+    public SecretPayload getSecret(
         final String namespace,
         final String name
     ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
@@ -426,9 +395,9 @@ public class K8SClient {
         }
 
         try {
-            var configMap = mapper.readValue((String) response.body(), ConfigMapPayload.class);
+            var secret = mapper.readValue((String) response.body(), SecretPayload.class);
             _logger.trace("Exiting %s", fn);
-            return configMap;
+            return secret;
         } catch (JsonProcessingException ex) {
             _logger.catching(ex);
             throw new K8SJSONError(ex);
