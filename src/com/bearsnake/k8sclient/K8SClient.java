@@ -375,6 +375,79 @@ public class K8SClient {
     }
 
     /**
+     * Retrieves a Pod object for a specific pod, by name
+     */
+    public Pod getPod(
+        final String podName
+    ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
+        var fn = "getPod";
+        _logger.trace("Entering %s podName=%s", fn, podName);
+
+        var mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        var suffix = "pods/" + podName;
+        var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            throw new K8SHTTPError(response.statusCode());
+        }
+
+        try {
+            var pod = mapper.readValue((String) response.body(), Pod.class);
+            _logger.trace("Exiting %s with %s", fn, pod);
+            return pod;
+        } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
+            throw new K8SJSONError(ex);
+        }
+    }
+
+    /**
+     * Returns a collection of NodeEntity objects representing the nodes known to K8S
+     */
+    public Collection<Pod> getPods() throws K8SRequestError, K8SHTTPError, K8SJSONError {
+        var fn = "getPods";
+        _logger.trace("Entering %s", fn);
+
+        var mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        var suffix = "pods";
+        var response = send(GET, suffix, HttpBodyType.None, null, HttpBodyType.Json);
+        if (!isSuccessful(response.statusCode())) {
+            throw new K8SHTTPError(response.statusCode());
+        }
+
+        try {
+            var podList = mapper.readValue((String) response.body(), PodListPayload.class);
+            _logger.trace("Exiting %s with %s", fn, podList);
+            return podList.items;
+        } catch (JsonProcessingException ex) {
+            _logger.catching(ex);
+            throw new K8SJSONError(ex);
+        }
+    }
+
+    /**
+     * Returns a collection of NodeEntity objects representing the nodes known to K8S,
+     * which are local to a particular node.
+     */
+    public Collection<Pod> getPodsForNode(
+        final String nodeName
+    ) throws K8SRequestError, K8SHTTPError, K8SJSONError {
+        var fn = "getPodsForNode";
+        _logger.trace("Entering %s with nodeName=%s", fn, nodeName);
+
+        var pods = getPods();
+        pods.removeIf(pod -> pod.spec.nodeName.equals(nodeName));
+
+        _logger.trace("Exiting %s with %s", fn, pods);
+        return pods;
+    }
+
+    /**
      * Returns a secret given its namespace and name.
      */
     public SecretPayload getSecret(
